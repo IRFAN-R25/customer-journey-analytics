@@ -1,0 +1,44 @@
+services:
+  # 1. FastAPI Backend Web Service
+  - type: web
+    name: customer-journey-backend
+    env: python
+    rootDir: backend
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: customer-journey-db
+          property: connectionString
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: PYTHON_VERSION
+        value: 3.12.0
+
+  # 2. React Vite Frontend Static Site
+  - type: web
+    name: customer-journey-frontend
+    env: static
+    rootDir: frontend
+    plan: free
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: customer-journey-backend
+          property: host
+
+databases:
+  # 3. Managed PostgreSQL Database
+  - name: customer-journey-db
+    databaseName: customer_journey_db
+    user: postgres
+    plan: free
