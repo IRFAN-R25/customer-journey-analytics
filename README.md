@@ -1,5 +1,7 @@
 # AI-Powered E-Commerce Customer Journey Analytics
 
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/IRFAN-R25/customer-journey-analytics)
+
 **Platform:** Enterprise E-Commerce Journey Intelligence  
 **Full-Stack Architecture:** React (Vite + TypeScript) + Tailwind CSS + FastAPI + PostgreSQL + scikit-learn  
 
