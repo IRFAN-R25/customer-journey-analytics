@@ -40,5 +40,5 @@ databases:
   # 3. Managed PostgreSQL Database
   - name: customer-journey-db
     databaseName: customer_journey_db
-    user: postgres
+    user: journey_admin
     plan: free
