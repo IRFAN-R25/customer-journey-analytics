@@ -17,20 +17,27 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
     headers,
   });
 
+  const text = await response.text();
+  let data: any = {};
+  try {
+    data = text ? JSON.parse(text) : {};
+  } catch {
+    data = null;
+  }
+
   if (!response.ok) {
     let errorMsg = `HTTP error! status: ${response.status}`;
-    try {
-      const errorData = await response.json();
-      if (errorData && errorData.detail) {
-        errorMsg = typeof errorData.detail === 'string' ? errorData.detail : JSON.stringify(errorData.detail);
-      }
-    } catch {
-      // ignore json parse error
+    if (data && data.detail) {
+      errorMsg = typeof data.detail === 'string' ? data.detail : JSON.stringify(data.detail);
+    } else if (response.status === 502 || response.status === 503) {
+      errorMsg = 'Backend server is waking up. Please wait 30-40 seconds and try again.';
+    } else if (response.status === 404) {
+      errorMsg = 'Backend endpoint not found. Backend may still be building on Render.';
     }
     throw new Error(errorMsg);
   }
 
-  return response.json();
+  return data ?? {};
 }
 
 export const api = {
